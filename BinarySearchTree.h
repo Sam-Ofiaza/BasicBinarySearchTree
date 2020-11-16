@@ -110,7 +110,101 @@ public:
     };
 
     TreeNode<T> *remove(T value) {
-        return nullptr;
+        TreeNode<T> *node = find(value);
+
+        if(node == root) { //Remove root case
+            TreeNode<T> *replacement = node->getRightChild();
+            while(replacement->getLeftChild() != nullptr) {
+                replacement = replacement->getLeftChild();
+            }
+            remove(replacement->getValue());
+
+            //Set replacement's pointers to neighbors
+            replacement->setLeftChild(node->getLeftChild());
+            replacement->setRightChild(node->getRightChild());
+            replacement->setParentNode(nullptr);
+
+            //Set replacement's neighbor pointers to replacement
+            replacement->getLeftChild()->setParentNode(replacement);
+            replacement->getRightChild()->setParentNode(replacement);
+
+            root = replacement;
+            return node;
+        }
+
+        TreeNode<T> *parent = node->getParentNode();
+        bool leftChild;
+
+        //First determine if node itself is a right or left child
+        if(node->getValue() <= parent->getValue()) {
+            leftChild = true;
+        }
+        else {
+            leftChild = false;
+        }
+
+        if(node->getLeftChild() == nullptr && node->getRightChild() == nullptr) { //Node has no children
+            if(leftChild) {
+                parent->setLeftChild(nullptr);
+                node->setParentNode(nullptr);
+                return node;
+            }
+            else {
+                parent->setRightChild(nullptr);
+                node->setParentNode(nullptr);
+                return node;
+            }
+        }
+        else if(node->getRightChild() == nullptr && node->getLeftChild() != nullptr) { //Only node's left child exists
+            if(leftChild) {
+                parent->setLeftChild(node->getLeftChild());
+                parent->getLeftChild()->setParentNode(parent);
+                node->setParentNode(nullptr);
+                return node;
+            }
+            else {
+                parent->setRightChild(node->getLeftChild());
+                parent->getRightChild()->setParentNode(parent);
+                node->setParentNode(nullptr);
+                return node;
+            }
+        }
+        else if(node->getLeftChild() == nullptr && node->getRightChild() != nullptr) { //Only node's right child exists
+            if(leftChild) {
+                parent->setLeftChild(node->getRightChild());
+                parent->getLeftChild()->setParentNode(parent);
+                node->setParentNode(nullptr);
+                return node;
+            }
+            else {
+                parent->setRightChild(node->getRightChild());
+                parent->getRightChild()->setParentNode(parent);
+                node->setParentNode(nullptr);
+                return node;
+            }
+        }
+        else { //Node has two children
+            TreeNode<T> *replacement = node->getRightChild();
+            while(replacement->getLeftChild() != nullptr) {
+                replacement = replacement->getLeftChild();
+            }
+
+            remove(replacement->getValue());
+            replacement->setLeftChild(node->getLeftChild());
+            replacement->setRightChild(node->getRightChild());
+            replacement->setParentNode(parent);
+
+            if(leftChild) {
+                parent->setLeftChild(replacement);
+                node->setParentNode(nullptr);
+                return node;
+            }
+            else {
+                parent->setRightChild(replacement);
+                node->setParentNode(nullptr);
+                return node;
+            }
+        }
     };
 
     void rebalance() {
@@ -122,6 +216,7 @@ public:
     };
 
     //clearContents helper method - modifies vector parameter to add nodes in postorder
+    //used postorder to prevent memory leaks (does it work though?)
     void clearContentsRecursively(TreeNode<T> *node){
         if(node != nullptr) {
             clearContentsRecursively(node->getLeftChild());
@@ -129,6 +224,15 @@ public:
             node->setLeftChild(nullptr);
             node->setRightChild(nullptr);
             node->setParentNode(nullptr);
+        }
+    };
+
+    void printTree() {
+        vector<T> list;
+        traverse(list);
+        cout << "\ntree: ";
+        for(T x : list) {
+            cout << x << " ";
         }
     };
 
