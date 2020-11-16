@@ -35,9 +35,13 @@ public:
     };
 
     void addNode(TreeNode<T> *node) {
-        //First check if the root has an null pointer to add to
+        //First check if the root is nullptr
+        if(root == nullptr) {
+            root = node;
+        }
+        //Then find direction and check if the root has an null child pointer to add to
         //If not, start recursive method with the correct direction child to find an available pointer
-        if(node->getValue() <= root->getValue()) {
+        else if(node->getValue() <= root->getValue()) {
             if(root->getLeftChild() == nullptr) {
                 root->setLeftChild(node);
                 node->setParentNode(root);
@@ -208,11 +212,27 @@ public:
     };
 
     void rebalance() {
+        vector<T> list;
+        traverse(list);
+        clearContents();
+        rebalanceRecursively(list, 0, list.size()/2, list.size()-1);
 
+    };
+
+    void rebalanceRecursively(vector<T> list, int start, int half, int end) {
+        TreeNode<T> *node = new TreeNode<T>(list.at(half));
+        addNode(node);
+        if(start <= (half+start)/2 && (half+start)/2 <= half-1) {
+            rebalanceRecursively(list, start, (half+start) / 2, half - 1);
+        }
+        if((half+1) <= ((half+1) + end)/2 && ((half+1) + end)/2 <= end) {
+            rebalanceRecursively(list, half + 1, ((half+1) + end) / 2, end);
+        }
     };
 
     void clearContents() {
         clearContentsRecursively(root);
+        root = nullptr;
     };
 
     //clearContents helper method - modifies vector parameter to add nodes in postorder
