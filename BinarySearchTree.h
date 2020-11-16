@@ -9,6 +9,7 @@ using namespace std;
 
 #include "TreeNode.h"
 #include <vector>
+#include <iostream>
 
 template<typename T>
 class BinarySearchTree {
@@ -24,7 +25,7 @@ public:
         traverseRecursively(traversalList, root);
     };
 
-    //traverse helper method
+    //traverse helper method - modifies vector parameter to add <T> values
     void traverseRecursively(vector<T> &traversalList, TreeNode<T> *node) const {
         if(node != nullptr) {
             traverseRecursively(traversalList, node->getLeftChild());
@@ -82,7 +83,30 @@ public:
     };
 
     TreeNode<T> *find(T value) {
-        return nullptr;
+        if(root->getValue() == value) {
+            return root;
+        }
+        else if(value < root->getValue()) {
+            return findRecursively(value, root->getLeftChild());
+        }
+        else {
+            return findRecursively(value, root->getRightChild());
+        }
+    };
+
+    TreeNode<T> *findRecursively(T value, TreeNode<T> *node){
+        if(node == nullptr) {
+            return nullptr;
+        }
+        else if(node->getValue() == value) {
+            return node;
+        }
+        else if(value < node->getValue()) {
+            return findRecursively(value, node->getLeftChild());
+        }
+        else {
+            return findRecursively(value, node->getRightChild());
+        }
     };
 
     TreeNode<T> *remove(T value) {
@@ -94,7 +118,18 @@ public:
     };
 
     void clearContents() {
+        clearContentsRecursively(root);
+    };
 
+    //clearContents helper method - modifies vector parameter to add nodes in postorder
+    void clearContentsRecursively(TreeNode<T> *node){
+        if(node != nullptr) {
+            clearContentsRecursively(node->getLeftChild());
+            clearContentsRecursively(node->getRightChild());
+            node->setLeftChild(nullptr);
+            node->setRightChild(nullptr);
+            node->setParentNode(nullptr);
+        }
     };
 
 private:
