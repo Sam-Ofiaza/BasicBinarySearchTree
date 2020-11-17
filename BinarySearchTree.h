@@ -39,7 +39,7 @@ public:
         if(root == nullptr) {
             root = node;
         }
-        //Then find direction and check if the root has an null child pointer to add to
+        //Then find the direction and check if the root has an null child pointer to add to
         //If not, start recursive method with the correct direction child to find an available pointer
         else if(node->getValue() <= root->getValue()) {
             if(root->getLeftChild() == nullptr) {
@@ -133,13 +133,14 @@ public:
             replacement->getRightChild()->setParentNode(replacement);
 
             root = replacement;
+
             return node;
         }
 
         TreeNode<T> *parent = node->getParentNode();
         bool leftChild;
 
-        //First determine if node itself is a right or left child
+        //First determine if the node itself is a right or left child
         if(node->getValue() <= parent->getValue()) {
             leftChild = true;
         }
@@ -194,6 +195,7 @@ public:
             }
 
             remove(replacement->getValue());
+
             replacement->setLeftChild(node->getLeftChild());
             replacement->setRightChild(node->getRightChild());
             replacement->setParentNode(parent);
@@ -215,13 +217,16 @@ public:
         vector<T> list;
         traverse(list);
         clearContents();
-        rebalanceRecursively(list, 0, list.size()/2, list.size()-1);
 
+        rebalanceRecursively(list, 0, list.size()/2, list.size()-1);
     };
 
     void rebalanceRecursively(vector<T> list, int start, int half, int end) {
         TreeNode<T> *node = new TreeNode<T>(list.at(half));
         addNode(node);
+
+        //Calculate the indexes of the start, half, and end of each halved section
+        //Check first if the recursive call indices make sense (i.e. start <= half <= finish)
         if(start <= (half+start)/2 && (half+start)/2 <= half-1) {
             rebalanceRecursively(list, start, (half+start) / 2, half - 1);
         }
@@ -236,11 +241,12 @@ public:
     };
 
     //clearContents helper method - modifies vector parameter to add nodes in postorder
-    //used postorder to prevent memory leaks (does it work though?)
+    //used postorder to remove children first to prevent memory leaks (not sure if it helped)
     void clearContentsRecursively(TreeNode<T> *node){
         if(node != nullptr) {
             clearContentsRecursively(node->getLeftChild());
             clearContentsRecursively(node->getRightChild());
+
             node->setLeftChild(nullptr);
             node->setRightChild(nullptr);
             node->setParentNode(nullptr);

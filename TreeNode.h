@@ -32,20 +32,14 @@ public:
     };
 
     void setLeftChild(TreeNode<T> *node) {
-        if(node == nullptr)
-            leftChild = nullptr;
         leftChild = node;
     };
 
     void setRightChild(TreeNode<T> *node) {
-        if(node == nullptr)
-            rightChild = nullptr;
         rightChild = node;
     };
 
     void setParentNode(TreeNode<T> *node) {
-        if(node == nullptr)
-            parent = nullptr;
         parent = node;
     };
 
