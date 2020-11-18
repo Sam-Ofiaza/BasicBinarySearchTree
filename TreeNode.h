@@ -43,6 +43,14 @@ public:
         parent = node;
     };
 
+    friend bool operator<=(const TreeNode<T>& left, const TreeNode<T>& right) {
+        return (left.value <= right.value);
+    }
+
+    friend bool operator>(const TreeNode<T>& left, const TreeNode<T>& right) {
+        return !(left <= right);
+    }
+
 private:
     T value;
     TreeNode<T> *leftChild;
